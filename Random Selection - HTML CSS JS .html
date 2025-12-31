@@ -1,0 +1,485 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Random Selector</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            padding: 50px;
+            background-color: #f0f4f8;
+        }
+
+        h1 {
+            color: #333;
+        }
+
+        .setup-section {
+            margin-bottom: 30px;
+            padding: 20px;
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            max-width: 500px;
+            margin: 0 auto 30px auto;
+        }
+
+        .option-input-section {
+            margin-bottom: 20px;
+        }
+
+        label, input, button {
+            font-size: 1.1em;
+            margin: 10px;
+        }
+
+        input {
+            padding: 8px;
+            text-align: center;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+        }
+
+        input:focus {
+            border-color: #007bff;
+            outline: none;
+        }
+
+        .option-count-input {
+            width: 80px;
+        }
+
+        .option-name-input {
+            width: 200px;
+            margin: 5px;
+        }
+
+        button {
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        .button_G {
+            padding: 10px 20px;
+            background-color: #2aab31;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .button_G:hover {
+            background-color: #25972b;
+        }
+
+        .skip-btn {
+            padding: 10px 15px;
+            background-color: #ff9000;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            margin-left: 5px;
+            font-size: 1.2em;
+        }
+
+        .skip-btn:hover {
+            background-color: #ff7b00;
+        }
+
+        .reset-btn {
+            background-color: #d3524a;
+        }
+
+        .reset-btn:hover {
+            background-color: #ce3e35;
+        }
+
+        .selection-section {
+            margin: 30px 0;
+        }
+
+        .button-group {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .game-box {
+            margin: 20px auto;
+            padding: 20px;
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            max-width: 500px;
+        }
+
+        .game-box h3 {
+            color: #333;
+            margin-bottom: 15px;
+        }
+
+        .selection-log h3 {
+            color: #007bff;
+            font-size: 1.5em;
+        }
+
+        .option-list {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .option-tag {
+            background-color: #e9ecef;
+            padding: 8px 15px;
+            border-radius: 20px;
+            border: 2px solid #007bff;
+            color: #333;
+            font-weight: bold;
+        }
+
+        .selection-log {
+            text-align: left;
+        }
+
+        #historyContent {
+            max-height: 250px;
+            overflow-y: auto;
+            min-height: 100px;
+        }
+
+        ul {
+            list-style-type: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        li {
+            margin: 8px 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px;
+            background-color: #f8f9fa;
+            border-radius: 5px;
+        }
+
+        .selected-option {
+            color: black;
+            font-weight: bold;
+        }
+
+        .selection-order {
+            color: #888;
+            font-size: 0.9em;
+            font-weight: bold;
+        }
+
+        .empty-log {
+            text-align: center;
+            color: #888;
+            font-style: italic;
+            padding: 20px;
+        }
+
+        .center-message {
+            text-align: center;
+            color: #888;
+        }
+
+        .status-message {
+            font-size: 1.2em;
+            color: #28a745;
+            margin: 20px 0;
+            font-weight: bold;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        #historyContent::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        #historyContent::-webkit-scrollbar-thumb {
+            background-color: #ccc;
+            border-radius: 3px;
+        }
+
+        #historyContent::-webkit-scrollbar-thumb:hover {
+            background-color: #999;
+        }
+    </style>
+</head>
+<body>
+    <h1>Random Selector</h1>
+
+    <div class="setup-section" id="setupSection">
+        <div>
+            <label>Number of Options:
+                <input type="number" id="optionCount" class="option-count-input" value="3" min="2" max="20">
+            </label>
+            <button onclick="setupOptionNames()">Set Options</button>
+        </div>
+
+        <div id="optionNamesSection" class="hidden">
+            <h3>Enter Option Names:</h3>
+            <div id="optionInputs"></div>
+            <button onclick="startGame()" id="startGameBtn" class="button_G hidden"> &nbsp; Start &nbsp; </button>
+        </div>
+    </div>
+
+    <div class="selection-section hidden" id="selectionSection">
+        <div class="button-group">
+            <button onclick="selectRandomOption()" id="selectBtn" class="button_G">Select Random Option</button>
+            <button onclick="skipToAll()" id="skipBtn" class="skip-btn">» </button>
+        </div>
+        <button onclick="resetGame()" id="resetBtn" class="reset-btn hidden"> &nbsp; Reset &nbsp; </button>
+        <div class="status-message" id="statusMessage"></div>
+    </div>
+
+    <div class="game-box hidden" id="remainingOptionsSection">
+        <h3>Remaining Options:</h3>
+        <div class="option-list" id="remainingOptionsList"></div>
+    </div>
+
+    <div class="game-box selection-log hidden" id="selectionLogSection">
+        <h3 id="selectionLogTitle">Results</h3>
+        <div id="historyContent">
+            <ul id="historyList"></ul>
+            <div class="empty-log" id="emptyLogMessage">No selections yet</div>
+        </div>
+    </div>
+
+    <script>
+        // Game state
+        let options = [];
+        let remainingOptions = [];
+        let selectionCount = 0;
+
+        // DOM element cache
+        const elements = {
+            optionCount: document.getElementById("optionCount"),
+            optionInputs: document.getElementById("optionInputs"),
+            optionNamesSection: document.getElementById("optionNamesSection"),
+            startGameBtn: document.getElementById("startGameBtn"),
+            setupSection: document.getElementById("setupSection"),
+            selectionSection: document.getElementById("selectionSection"),
+            remainingOptionsSection: document.getElementById("remainingOptionsSection"),
+            selectionLogSection: document.getElementById("selectionLogSection"),
+            selectBtn: document.getElementById("selectBtn"),
+            skipBtn: document.getElementById("skipBtn"),
+            resetBtn: document.getElementById("resetBtn"),
+            statusMessage: document.getElementById("statusMessage"),
+            selectionLogTitle: document.getElementById("selectionLogTitle"),
+            remainingOptionsList: document.getElementById("remainingOptionsList"),
+            historyList: document.getElementById("historyList"),
+            emptyLogMessage: document.getElementById("emptyLogMessage")
+        };
+
+        function setupOptionNames() {
+            const optionCount = parseInt(elements.optionCount.value);
+
+            if (isNaN(optionCount) || optionCount < 2 || optionCount > 20) {
+                alert("Please enter a valid number of options (2-20).");
+                return;
+            }
+
+            // Clear previous inputs
+            elements.optionInputs.innerHTML = "";
+
+            // Create input fields
+            for (let i = 1; i <= optionCount; i++) {
+                elements.optionInputs.insertAdjacentHTML('beforeend', `
+                    <div class="option-input-section">
+                        <label>Option ${i}:
+                            <input type="text" class="option-name-input" id="option${i}" placeholder="Enter name" required>
+                        </label>
+                    </div>
+                `);
+            }
+
+            // Show input section
+            elements.optionNamesSection.classList.remove("hidden");
+            elements.startGameBtn.classList.remove("hidden");
+        }
+
+        function startGame() {
+            const optionCount = parseInt(elements.optionCount.value);
+            options = [];
+
+            // Collect and validate option names
+            for (let i = 1; i <= optionCount; i++) {
+                const name = document.getElementById(`option${i}`).value.trim();
+                if (!name) {
+                    alert(`Please enter a name for Option ${i}.`);
+                    return;
+                }
+                if (options.includes(name)) {
+                    alert(`Option name "${name}" is already used. Please use unique names.`);
+                    return;
+                }
+                options.push(name);
+            }
+
+            // Initialize game state
+            remainingOptions = [...options];
+            selectionCount = 0;
+
+            // Show game interface and update displays
+            showGameInterface();
+            updateRemainingOptionsDisplay();
+            updateLogDisplay();
+
+            elements.statusMessage.innerText = `Started with ${options.length} options!`;
+            elements.selectionLogTitle.innerText = "Results";
+        }
+
+        function showGameInterface() {
+            // Hide setup, show game sections
+            elements.setupSection.classList.add("hidden");
+            elements.selectionSection.classList.remove("hidden");
+            elements.remainingOptionsSection.classList.remove("hidden");
+            elements.selectionLogSection.classList.remove("hidden");
+
+            // Show selection buttons, hide reset button
+            elements.selectBtn.classList.remove("hidden");
+            elements.skipBtn.classList.remove("hidden");
+            elements.resetBtn.classList.add("hidden");
+        }
+
+        function selectRandomOption() {
+            if (remainingOptions.length === 0) return;
+
+            // Handle final two options without delay
+            if (remainingOptions.length === 2) {
+                // Select first option
+                const randomIndex1 = Math.floor(Math.random() * 2);
+                const selectedOption = remainingOptions.splice(randomIndex1, 1)[0];
+                selectionCount++;
+                addToHistory(selectedOption, selectionCount);
+
+                // Immediately select final option
+                const finalOption = remainingOptions.splice(0, 1)[0];
+                selectionCount++;
+                addToHistory(finalOption, selectionCount);
+
+                completeGame(finalOption);
+                updateRemainingOptionsDisplay();
+                return;
+            }
+
+            // Normal selection for 3+ options
+            const randomIndex = Math.floor(Math.random() * remainingOptions.length);
+            const selectedOption = remainingOptions.splice(randomIndex, 1)[0];
+            selectionCount++;
+
+            addToHistory(selectedOption, selectionCount);
+            elements.selectionLogTitle.innerText = `Last Selected: ${selectedOption}`;
+
+            if (remainingOptions.length === 0) {
+                completeGame(selectedOption);
+            } else {
+                elements.statusMessage.innerText = `${remainingOptions.length} options remaining`;
+            }
+
+            updateRemainingOptionsDisplay();
+        }
+
+        function skipToAll() {
+            if (remainingOptions.length === 0) return;
+
+            // Randomly select all remaining options at once
+            while (remainingOptions.length > 0) {
+                const randomIndex = Math.floor(Math.random() * remainingOptions.length);
+                const selectedOption = remainingOptions.splice(randomIndex, 1)[0];
+                selectionCount++;
+                addToHistory(selectedOption, selectionCount);
+            }
+
+            // Complete the game
+            const lastOption = elements.historyList.lastElementChild?.querySelector('.selected-option')?.textContent;
+            completeGame(lastOption || "Complete");
+            updateRemainingOptionsDisplay();
+        }
+
+        function completeGame(finalOption) {
+            elements.statusMessage.innerText = "Finished!";
+            elements.selectBtn.classList.add("hidden");
+            elements.skipBtn.classList.add("hidden");
+            elements.resetBtn.classList.remove("hidden");
+            elements.selectionLogTitle.innerText = `Last Selected: ${finalOption}`;
+            updateRemainingOptionsDisplay();
+        }
+
+        function updateRemainingOptionsDisplay() {
+            if (remainingOptions.length === 0) {
+                elements.remainingOptionsList.innerHTML = '<div class="center-message">No options remaining</div>';
+                return;
+            }
+
+            const fragment = document.createDocumentFragment();
+            remainingOptions.forEach(option => {
+                const optionTag = document.createElement("div");
+                optionTag.className = "option-tag";
+                optionTag.textContent = option;
+                fragment.appendChild(optionTag);
+            });
+
+            elements.remainingOptionsList.innerHTML = "";
+            elements.remainingOptionsList.appendChild(fragment);
+        }
+
+        function addToHistory(optionName, order) {
+            const li = document.createElement("li");
+            li.innerHTML = `
+                <span class="selected-option">${optionName}</span>
+                <span class="selection-order">#${order}</span>
+            `;
+            elements.historyList.appendChild(li);
+            updateLogDisplay();
+        }
+
+        function updateLogDisplay() {
+            elements.emptyLogMessage.style.display = elements.historyList.children.length === 0 ? "block" : "none";
+        }
+
+        function resetGame() {
+            // Reset state
+            options = [];
+            remainingOptions = [];
+            selectionCount = 0;
+
+            // Clear displays
+            elements.historyList.innerHTML = "";
+            elements.statusMessage.innerText = "";
+            elements.optionInputs.innerHTML = "";
+            elements.optionCount.value = "3";
+
+            // Show setup, hide game sections
+            elements.setupSection.classList.remove("hidden");
+            elements.selectionSection.classList.add("hidden");
+            elements.remainingOptionsSection.classList.add("hidden");
+            elements.selectionLogSection.classList.add("hidden");
+            elements.optionNamesSection.classList.add("hidden");
+
+            updateLogDisplay();
+        }
+    </script>
+</body>
+</html>
